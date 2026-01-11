@@ -5,70 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anastasia Ahani</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background-color: #2d4a2b;
             color: white;
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: #1a2e1a;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .profile-pic {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 40px;
         }
 
         nav {
-            background-color: #1a2e1a;
-            padding: 15px;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
         }
 
         nav a {
             color: white;
             text-decoration: none;
-            margin: 0 20px;
+            padding: 12px 0;
             font-size: 18px;
+            text-align: center;
             transition: opacity 0.3s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav a:first-child {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         nav a:hover {
             opacity: 0.7;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            text-align: center;
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 80px 60px;
+            max-width: 900px;
         }
 
-        h1 {
-            font-size: 48px;
-            margin-bottom: 10px;
+        .interest-section {
+            font-size: 32px;
+            margin-bottom: 40px;
+            min-height: 50px;
         }
 
-        .blurb {
-            font-size: 20px;
-            margin-bottom: 30px;
+        .typed-text {
+            color: #8bc78f;
+            font-weight: bold;
         }
 
-        .profile-pic {
-            max-width: 300px;
-            height: auto;
-            border-radius: 10px;
-            margin: 20px auto;
-            display: block;
+        .description {
+            font-size: 18px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 40px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="art.html">Art</a>
-        <a href="cv.html">CV</a>
-        <a href="blog.html">Blog</a>
-    </nav>
-
-    <div class="container">
+    <div class="sidebar">
         <h1>Anastasia Ahani</h1>
-        <p class="blurb">hi, welcome to my website</p>
         <img src="stas_pic.png" alt="Profile picture" class="profile-pic">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="art.html">Art</a>
+            <a href="cv.html">CV</a>
+            <a href="blog.html">Blog</a>
+        </nav>
     </div>
+
+    <div class="main-content">
+        <div class="interest-section">
+            I'm interested in <span class="typed-text" id="typed"></span>
+        </div>
+        <p class="description">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+    </div>
+
+    <script>
+        const words = ["interpretability", "AI safety"];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typedElement = document.getElementById("typed");
+        const typingSpeed = 100;
+        const deletingSpeed = 50;
+        const pauseBetweenWords = 2000;
+
+        function type() {
+            const currentWord = words[wordIndex];
+
+            if (isDeleting) {
+                typedElement.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typedElement.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                setTimeout(() => {
+                    isDeleting = true;
+                    type();
+                }, pauseBetweenWords);
+                return;
+            }
+
+            if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+            }
+
+            const speed = isDeleting ? deletingSpeed : typingSpeed;
+            setTimeout(type, speed);
+        }
+
+        type();
+    </script>
 </body>
 </html>
