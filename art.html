@@ -60,6 +60,13 @@
             opacity: 0.85;
         }
 
+        .gallery img.wide {
+            column-span: all;
+            width: 100%;
+            max-height: 600px;
+            object-fit: cover;
+        }
+
         .lightbox {
             display: none;
             position: fixed;
@@ -106,12 +113,12 @@
         <h1>Art</h1>
         <div class="gallery">
             <img src="art/IMG_0046.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_1969.jpg" alt="Art" onclick="openLightbox(this)">
             <img src="art/IMG_2224.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_4363.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_5539.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_8500.jpg" alt="Art" onclick="openLightbox(this)">
             <img src="art/IMG_8564.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_1969.jpg" alt="Art wide" class="wide" onclick="openLightbox(this)">
+            <img src="art/IMG_5539.jpg" alt="Art wide" class="wide" onclick="openLightbox(this)">
+            <img src="art/IMG_4363.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_8500.jpg" alt="Art" onclick="openLightbox(this)">
         </div>
     </div>
 
