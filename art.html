@@ -32,14 +32,65 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 50px auto;
             padding: 20px;
         }
 
         h1 {
             font-size: 36px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .gallery {
+            columns: 3;
+            column-gap: 16px;
+        }
+
+        .gallery img {
+            width: 100%;
+            display: block;
+            margin-bottom: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .gallery img:hover {
+            opacity: 0.85;
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .lightbox.open {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 6px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                columns: 2;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery {
+                columns: 1;
+            }
         }
     </style>
 </head>
@@ -53,7 +104,30 @@
 
     <div class="container">
         <h1>Art</h1>
-        <p>Coming soon...</p>
+        <div class="gallery">
+            <img src="art/IMG_0046.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_1969.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_2224.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_4363.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_5539.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_8500.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_8564.jpg" alt="Art" onclick="openLightbox(this)">
+        </div>
     </div>
+
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        function openLightbox(img) {
+            document.getElementById('lightbox-img').src = img.src;
+            document.getElementById('lightbox').classList.add('open');
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('open');
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+    </script>
 </body>
 </html>
