@@ -32,7 +32,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 50px auto;
             padding: 20px;
         }
@@ -43,14 +43,16 @@
         }
 
         .gallery {
-            columns: 3;
-            column-gap: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            align-items: start;
         }
 
         .gallery img {
             width: 100%;
+            height: auto;
             display: block;
-            margin-bottom: 16px;
             border-radius: 6px;
             cursor: pointer;
             transition: opacity 0.2s;
@@ -61,10 +63,7 @@
         }
 
         .gallery img.wide {
-            column-span: all;
-            width: 100%;
-            max-height: 600px;
-            object-fit: cover;
+            grid-column: span 2;
         }
 
         .lightbox {
@@ -90,13 +89,16 @@
 
         @media (max-width: 768px) {
             .gallery {
-                columns: 2;
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 480px) {
             .gallery {
-                columns: 1;
+                grid-template-columns: 1fr;
+            }
+            .gallery img.wide {
+                grid-column: span 1;
             }
         }
     </style>
@@ -115,9 +117,9 @@
             <img src="art/IMG_0046.jpg" alt="Art" onclick="openLightbox(this)">
             <img src="art/IMG_2224.jpg" alt="Art" onclick="openLightbox(this)">
             <img src="art/IMG_8564.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_1969.jpg" alt="Art wide" class="wide" onclick="openLightbox(this)">
-            <img src="art/IMG_5539.jpg" alt="Art wide" class="wide" onclick="openLightbox(this)">
+            <img src="art/IMG_1969.jpg" alt="Art" class="wide" onclick="openLightbox(this)">
             <img src="art/IMG_4363.jpg" alt="Art" onclick="openLightbox(this)">
+            <img src="art/IMG_5539.jpg" alt="Art" class="wide" onclick="openLightbox(this)">
             <img src="art/IMG_8500.jpg" alt="Art" onclick="openLightbox(this)">
         </div>
     </div>
