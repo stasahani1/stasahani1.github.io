@@ -39,7 +39,46 @@
 
         h1 {
             font-size: 36px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .post-card {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px 0;
+        }
+
+        .post-card a {
+            text-decoration: none;
+            color: white;
+        }
+
+        .post-card a:hover .post-title {
+            color: #8bc78f;
+        }
+
+        .post-title {
+            font-size: 24px;
+            margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+
+        .post-date {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .post-preview {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            nav a {
+                margin: 0 10px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -53,7 +92,14 @@
 
     <div class="container">
         <h1>Blog</h1>
-        <p>Coming soon...</p>
+
+        <div class="post-card">
+            <a href="blog/the-value-of-inconveniencing-yourself.html">
+                <div class="post-title">The Value of Inconveniencing Yourself</div>
+                <div class="post-date">May 14, 2026</div>
+                <div class="post-preview">There's a word we've been trained to recoil from: inconvenience. We optimize our lives to avoid it. But I've been thinking about a specific kind of inconvenience that we've maybe been too quick to engineer out of our lives.</div>
+            </a>
+        </div>
     </div>
 </body>
 </html>
