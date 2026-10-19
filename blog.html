@@ -4,102 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog - Anastasia Ahani</title>
+    <meta name="theme-color" content="#08120a">
+    <script>document.documentElement.classList.add("js")</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/site.css">
+    <script type="speculationrules">{"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
     <style>
-        body {
-            background-color: #2d4a2b;
-            color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav {
-            background-color: #1a2e1a;
-            padding: 15px;
-            text-align: center;
-        }
-
-        nav a {
-            color: white;
+        body { background: var(--forest-900); }
+        .posts { padding: 0 var(--gutter) clamp(80px, 10vw, 140px); }
+        .post {
+            display: grid;
+            grid-template-columns: 140px 1fr auto;
+            gap: 28px;
+            align-items: baseline;
+            padding: 34px 0;
+            border-top: 1px solid var(--cream-faint);
             text-decoration: none;
-            margin: 0 20px;
-            font-size: 18px;
-            transition: opacity 0.3s;
         }
-
-        nav a:hover {
-            opacity: 0.7;
+        .post:last-child { border-bottom: 1px solid var(--cream-faint); }
+        .post time { font-family: var(--mono); font-size: 13px; color: var(--sage); }
+        .post h2 {
+            font-size: clamp(32px, 4.6vw, 68px);
+            font-weight: 300;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+            transition: color 0.4s;
         }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 36px;
-            margin-bottom: 30px;
-        }
-
-        .post-card {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 25px 0;
-        }
-
-        .post-card a {
-            text-decoration: none;
-            color: white;
-        }
-
-        .post-card a:hover .post-title {
-            color: #8bc78f;
-        }
-
-        .post-title {
-            font-size: 24px;
-            margin-bottom: 8px;
-            transition: color 0.3s;
-        }
-
-        .post-date {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .post-preview {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 768px) {
-            nav a {
-                margin: 0 10px;
-                font-size: 16px;
-            }
+        .post p { margin-top: 14px; color: var(--cream-dim); max-width: 62ch; }
+        .post .arrow { font-size: 40px; transition: transform 0.5s var(--ease), color 0.4s; }
+        .post:hover h2 { color: var(--blush); }
+        .post:hover .arrow { transform: translateX(10px) rotate(-45deg); color: var(--strawberry); }
+        @media (max-width: 700px) {
+            .post { grid-template-columns: 1fr; gap: 10px; }
+            .post .arrow { display: none; }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="art.html">Art</a>
-        <a href="cv.html">CV</a>
-        <a href="blog.html">Blog</a>
+    <nav class="site-nav" aria-label="Main">
+        <a class="nav-home" href="index.html"><img src="assets/img/stas.webp" alt=""><span>Anastasia Ahani</span></a>
+        <ul class="nav-links">
+            <li><a href="index.html"><sup>01</sup>Home</a></li>
+            <li><a href="art.html"><sup>02</sup>Art</a></li>
+            <li><a href="cv.html"><sup>03</sup>CV</a></li>
+            <li><a href="blog.html" aria-current="page"><sup>04</sup>Blog</a></li>
+        </ul>
     </nav>
 
-    <div class="container">
-        <h1>Blog</h1>
+    <header class="page-head">
+        <span class="label">04 &nbsp;/&nbsp; Notes from the garden</span>
+        <h1 class="split">The <em>blog</em></h1>
+    </header>
 
-        <div class="post-card">
-            <a href="blog/the-value-of-inconveniencing-yourself.html">
-                <div class="post-title">The Value of Inconveniencing Yourself</div>
-                <div class="post-date">May 14, 2026</div>
-                <div class="post-preview">There's an idea we've been trained to try to often avoid: inconvenience. We optimize our lives to avoid it. But I've been thinking about a specific kind of inconvenience that we've maybe been too quick to engineer out of our lives.</div>
-            </a>
+    <!-- To add a post: copy an <a class="post"> block and put the newest at the top -->
+    <main class="posts">
+        <a class="post" href="blog/the-value-of-inconveniencing-yourself.html" data-reveal>
+            <time datetime="2026-05-14">May 14, 2026</time>
+            <div>
+                <h2>The Value of Inconveniencing Yourself</h2>
+                <p>There's an idea we've been trained to try to often avoid: inconvenience. We optimize our lives to avoid it. But I've been thinking about a specific kind of inconvenience that we've maybe been too quick to engineer out of our lives.</p>
+            </div>
+            <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-row" style="margin-top:0">
+            <span>&copy; 2026 Anastasia Ahani</span>
+            <nav aria-label="Footer"><a href="index.html">Home</a><a href="art.html">Art</a><a href="cv.html">CV</a><a href="blog.html">Blog</a></nav>
         </div>
-    </div>
+    </footer>
+
+    <script src="assets/site.js" defer></script>
 </body>
 </html>

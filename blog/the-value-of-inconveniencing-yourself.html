@@ -4,108 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Value of Inconveniencing Yourself - Anastasia Ahani</title>
+    <meta name="theme-color" content="#08120a">
+    <script>document.documentElement.classList.add("js")</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/site.css">
+    <script type="speculationrules">{"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
     <style>
-        body {
-            background-color: #2d4a2b;
-            color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+        body { background: var(--forest-900); }
+        .progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            width: 100%;
+            z-index: 60;
+            background: linear-gradient(90deg, var(--sage), var(--blush), var(--strawberry));
+            transform-origin: left;
+            transform: scaleX(var(--p, 0));
         }
-
-        nav {
-            background-color: #1a2e1a;
-            padding: 15px;
-            text-align: center;
+        .post-head { padding: clamp(130px, 20vh, 200px) var(--gutter) 48px; max-width: 1200px; margin: 0 auto; }
+        .post-head h1 {
+            font-size: clamp(48px, 8.5vw, 132px);
+            line-height: 0.92;
+            font-weight: 300;
+            letter-spacing: -0.04em;
+            font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
         }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 20px;
-            font-size: 18px;
-            transition: opacity 0.3s;
-        }
-
-        nav a:hover {
-            opacity: 0.7;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-
-        .post-date {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-size: 36px;
-            margin-bottom: 8px;
-            line-height: 1.2;
-        }
-
+        .post-head .label { display: block; margin-bottom: 20px; }
         .post-body {
-            font-size: 18px;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.9);
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 24px var(--gutter) 40px;
+            font-size: 21px;
+            line-height: 1.7;
+            font-variation-settings: "opsz" 18;
+            color: rgba(239, 232, 214, 0.9);
         }
-
-        .post-body p {
-            margin-bottom: 24px;
+        .post-body p { margin-bottom: 1.4em; }
+        .post-body p:first-child::first-letter {
+            float: left;
+            font-size: 5.2em;
+            line-height: 0.82;
+            padding: 0.06em 0.1em 0 0;
+            color: var(--strawberry);
+            font-style: italic;
+            font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
         }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 40px;
-            color: #8bc78f;
-            text-decoration: none;
-            font-size: 16px;
-            transition: opacity 0.3s;
-        }
-
-        .back-link:hover {
-            opacity: 0.7;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-                margin: 30px auto;
-            }
-
-            h1 {
-                font-size: 28px;
-            }
-
-            .post-body {
-                font-size: 16px;
-            }
-
-            nav a {
-                margin: 0 10px;
-                font-size: 16px;
-            }
-        }
+        .post-body p:last-child { font-size: 1.15em; font-style: italic; color: var(--cream); }
+        .post-foot { max-width: 680px; margin: 0 auto; padding: 0 var(--gutter) 100px; }
+        @media (max-width: 600px) { .post-body { font-size: 18px; } }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="../index.html">Home</a>
-        <a href="../art.html">Art</a>
-        <a href="../cv.html">CV</a>
-        <a href="../blog.html">Blog</a>
+    <nav class="site-nav" aria-label="Main">
+        <a class="nav-home" href="../index.html"><img src="../assets/img/stas.webp" alt=""><span>Anastasia Ahani</span></a>
+        <ul class="nav-links">
+            <li><a href="../index.html"><sup>01</sup>Home</a></li>
+            <li><a href="../art.html"><sup>02</sup>Art</a></li>
+            <li><a href="../cv.html"><sup>03</sup>CV</a></li>
+            <li><a href="../blog.html" aria-current="page"><sup>04</sup>Blog</a></li>
+        </ul>
     </nav>
 
-    <div class="container">
-        <h1>The Value of Inconveniencing Yourself</h1>
-        <div class="post-date">May 14, 2026</div>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <header class="post-head">
+        <span class="label"><time datetime="2026-05-14">May 14, 2026</time> &nbsp;/&nbsp; Essay</span>
+        <h1 class="split">The Value of <em>Inconveniencing</em> Yourself</h1>
+    </header>
 
-        <div class="post-body">
+    <article class="post-body">
             <p>
                 There's an idea we've been trained to try to often avoid: inconvenience. We optimize our lives to avoid it. We streamline our mornings, automate our errands, curate our social lives to minimize friction. And in many ways, this makes sense&mdash;why suffer unnecessarily?
             </p>
@@ -142,9 +110,28 @@
             <p>
                 Inconvenience yourself. Not always, not to the point of self-destruction, but more than you think you should. The world doesn't need more people who are optimized. It needs more people who are willing to be interrupted.
             </p>
-        </div>
+    </article>
 
-        <a href="../blog.html" class="back-link">&larr; Back to all posts</a>
+    <div class="post-foot">
+        <a class="pill" href="../blog.html">&larr; All posts</a>
     </div>
+
+    <footer class="site-footer">
+        <div class="footer-row" style="margin-top:0">
+            <span>&copy; 2026 Anastasia Ahani</span>
+            <nav aria-label="Footer"><a href="../index.html">Home</a><a href="../art.html">Art</a><a href="../cv.html">CV</a><a href="../blog.html">Blog</a></nav>
+        </div>
+    </footer>
+
+    <script src="../assets/site.js" defer></script>
+    <script>
+        const bar = document.getElementById("progress");
+        const update = () => {
+            const max = document.documentElement.scrollHeight - innerHeight;
+            bar.style.setProperty("--p", max > 0 ? Math.min(scrollY / max, 1) : 0);
+        };
+        addEventListener("scroll", update, { passive: true });
+        update();
+    </script>
 </body>
 </html>

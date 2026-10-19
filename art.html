@@ -4,139 +4,226 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Art - Anastasia Ahani</title>
+    <meta name="theme-color" content="#08120a">
+    <script>document.documentElement.classList.add("js")</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/site.css">
+    <script type="speculationrules">{"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
     <style>
-        body {
-            background-color: #2d4a2b;
-            color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav {
-            background-color: #1a2e1a;
-            padding: 15px;
-            text-align: center;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 20px;
-            font-size: 18px;
-            transition: opacity 0.3s;
-        }
-
-        nav a:hover {
-            opacity: 0.7;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 36px;
-            margin-bottom: 30px;
-        }
+        body { background: var(--forest-700); }
+        .page-head p { max-width: 46ch; margin-top: 44px; color: var(--cream-dim); font-size: 20px; }
 
         .gallery {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            grid-auto-flow: dense;
+            gap: clamp(12px, 1.6vw, 22px);
+            padding: 0 var(--gutter) clamp(80px, 10vw, 140px);
             align-items: start;
         }
-
+        .gallery figure { cursor: zoom-in; }
+        .gallery figure.wide { grid-column: span 2; }
+        .gallery .frame {
+            overflow: hidden;
+            border-radius: 6px;
+            transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+        .gallery figure:hover .frame { box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45); }
         .gallery img {
             width: 100%;
             height: auto;
-            display: block;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: opacity 0.2s;
+            background: var(--forest-900);
+            transition: transform 1.1s var(--ease), filter 0.6s;
+        }
+        .gallery figure:hover img { transform: scale(1.04); }
+        .gallery figcaption {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--cream-dim);
+        }
+        @media (max-width: 800px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 500px) {
+            .gallery { grid-template-columns: 1fr; }
+            .gallery figure.wide { grid-column: auto; }
         }
 
-        .gallery img:hover {
-            opacity: 0.85;
-        }
-
-        .gallery img.wide {
-            grid-column: span 2;
-        }
-
+        /* Lightbox */
         .lightbox {
-            display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
+            z-index: 200;
+            display: grid;
+            place-items: center;
+            background: rgba(8, 18, 10, 0.94);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s var(--ease);
         }
-
-        .lightbox.open {
-            display: flex;
-        }
-
+        .lightbox.open { opacity: 1; pointer-events: auto; }
         .lightbox img {
-            max-width: 90vw;
-            max-height: 90vh;
-            border-radius: 6px;
+            max-width: min(92vw, 1400px);
+            max-height: 84vh;
+            width: auto; height: auto;
             object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
         }
-
-        @media (max-width: 768px) {
-            .gallery {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .lightbox.open img { view-transition-name: art-open; }
+        .lb-bar {
+            position: absolute;
+            left: var(--gutter); right: var(--gutter); bottom: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--mono);
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
-
-        @media (max-width: 480px) {
-            .gallery {
-                grid-template-columns: 1fr;
-            }
-            .gallery img.wide {
-                grid-column: span 1;
-            }
+        .lb-bar button, .lb-close {
+            background: none;
+            border: 1px solid var(--cream-faint);
+            color: var(--cream);
+            font: inherit;
+            padding: 10px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
         }
+        .lb-bar button:hover, .lb-close:hover { background: var(--cream); color: var(--ink); }
+        .lb-close {
+            position: absolute;
+            top: 18px; right: var(--gutter);
+            font-family: var(--mono);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        ::view-transition-group(art-open) { animation-duration: 0.5s; animation-timing-function: var(--ease); }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="art.html">Art</a>
-        <a href="cv.html">CV</a>
-        <a href="blog.html">Blog</a>
+    <nav class="site-nav" aria-label="Main">
+        <a class="nav-home" href="index.html"><img src="assets/img/stas.webp" alt=""><span>Anastasia Ahani</span></a>
+        <ul class="nav-links">
+            <li><a href="index.html"><sup>01</sup>Home</a></li>
+            <li><a href="art.html" aria-current="page"><sup>02</sup>Art</a></li>
+            <li><a href="cv.html"><sup>03</sup>CV</a></li>
+            <li><a href="blog.html"><sup>04</sup>Blog</a></li>
+        </ul>
     </nav>
 
-    <div class="container">
-        <h1>Art</h1>
-        <div class="gallery">
-            <img src="art/IMG_0046.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_2224.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_8564.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_1969.jpg" alt="Art" class="wide" onclick="openLightbox(this)">
-            <img src="art/IMG_4363.jpg" alt="Art" onclick="openLightbox(this)">
-            <img src="art/IMG_5539.jpg" alt="Art" class="wide" onclick="openLightbox(this)">
-            <img src="art/IMG_8500.jpg" alt="Art" onclick="openLightbox(this)">
+    <header class="page-head">
+        <span class="label">02 &nbsp;/&nbsp; Oil on canvas</span>
+        <h1 class="split">The <em>paintings</em></h1>
+        <p data-reveal>Oil on canvas, mostly. Hands, backs, faces, candlelight.</p>
+    </header>
+
+    <!-- To add a painting: run it through the image resizer (art/web/NAME.webp + NAME-sm.webp)
+         and copy a <figure>. Add class="wide" for landscape pieces. -->
+    <main class="gallery">
+        <figure data-reveal><div class="frame" data-tilt><img src="art/web/IMG_0046-sm.webp" data-full="art/web/IMG_0046.webp" width="900" height="1200" alt="Painting of a woman at a candlelit red table" loading="lazy"></div><figcaption><span>Nº 01</span><span>Oil on canvas</span></figcaption></figure>
+        <figure data-reveal style="--d:.08s"><div class="frame" data-tilt><img src="art/web/IMG_2224-sm.webp" data-full="art/web/IMG_2224.webp" width="900" height="1200" alt="Painting of a veiled woman looking upward, holding a coin" loading="lazy"></div><figcaption><span>Nº 02</span><span>Oil on canvas</span></figcaption></figure>
+        <figure data-reveal style="--d:.16s"><div class="frame" data-tilt><img src="art/web/IMG_8564-sm.webp" data-full="art/web/IMG_8564.webp" width="900" height="1200" alt="Portrait of a bearded man against a brown ground" loading="lazy"></div><figcaption><span>Nº 03</span><span>Oil on canvas</span></figcaption></figure>
+        <figure class="wide" data-reveal><div class="frame" data-tilt><img src="art/web/IMG_1969-sm.webp" data-full="art/web/IMG_1969.webp" width="900" height="675" alt="Painting of two figures, hands gripping a thigh" loading="lazy"></div><figcaption><span>Nº 04</span><span>Oil on canvas</span></figcaption></figure>
+        <figure data-reveal style="--d:.08s"><div class="frame" data-tilt><img src="art/web/IMG_4363-sm.webp" data-full="art/web/IMG_4363.webp" width="900" height="1200" alt="Black and white painting of hands resting on a body" loading="lazy"></div><figcaption><span>Nº 05</span><span>Oil on canvas</span></figcaption></figure>
+        <figure class="wide" data-reveal><div class="frame" data-tilt><img src="art/web/IMG_5539-sm.webp" data-full="art/web/IMG_5539.webp" width="900" height="675" alt="Reclining nude in greyscale beneath a red curtain" loading="lazy"></div><figcaption><span>Nº 06</span><span>Oil on canvas</span></figcaption></figure>
+        <figure data-reveal style="--d:.08s"><div class="frame" data-tilt><img src="art/web/IMG_8500-sm.webp" data-full="art/web/IMG_8500.webp" width="900" height="1200" alt="Close-up painted study of a man's face" loading="lazy"></div><figcaption><span>Nº 07</span><span>Oil on canvas</span></figcaption></figure>
+    </main>
+
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Painting viewer">
+        <button class="lb-close" id="lb-close">Close ✕</button>
+        <img id="lb-img" src="" alt="">
+        <div class="lb-bar">
+            <button id="lb-prev" aria-label="Previous painting">&larr; Prev</button>
+            <span id="lb-count"></span>
+            <button id="lb-next" aria-label="Next painting">Next &rarr;</button>
         </div>
     </div>
 
-    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-        <img id="lightbox-img" src="" alt="">
-    </div>
+    <footer class="site-footer">
+        <div class="footer-row" style="margin-top:0">
+            <span>&copy; 2026 Anastasia Ahani</span>
+            <nav aria-label="Footer"><a href="index.html">Home</a><a href="art.html">Art</a><a href="cv.html">CV</a><a href="blog.html">Blog</a></nav>
+        </div>
+    </footer>
 
+    <script src="assets/site.js" defer></script>
     <script>
-        function openLightbox(img) {
-            document.getElementById('lightbox-img').src = img.src;
-            document.getElementById('lightbox').classList.add('open');
+        const thumbs = [...document.querySelectorAll(".gallery img")];
+        const lb = document.getElementById("lightbox");
+        const lbImg = document.getElementById("lb-img");
+        const count = document.getElementById("lb-count");
+        let current = -1;
+
+        // Animate with the View Transitions API where supported, plain fade otherwise
+        const transition = fn => {
+            if (!document.startViewTransition) return fn();
+            document.documentElement.classList.add("vt-local");
+            const vt = document.startViewTransition(fn);
+            vt.finished.finally(() => document.documentElement.classList.remove("vt-local"));
+            return vt;
+        };
+
+        function show(i) {
+            current = (i + thumbs.length) % thumbs.length;
+            const t = thumbs[current];
+            lbImg.src = t.src;          // small version shows instantly...
+            lbImg.alt = t.alt;
+            const full = new Image();   // ...then swaps to full resolution once loaded
+            full.onload = () => { if (thumbs[current] === t) lbImg.src = t.dataset.full; };
+            full.src = t.dataset.full;
+            count.textContent = `${String(current + 1).padStart(2, "0")} / ${String(thumbs.length).padStart(2, "0")}`;
         }
-        function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('open');
+        function open(i) {
+            thumbs[i].style.viewTransitionName = "art-open";
+            transition(() => {
+                thumbs[i].style.viewTransitionName = "";
+                show(i);
+                lb.classList.add("open");
+            });
+            document.body.style.overflow = "hidden";
         }
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+        function close() {
+            if (current < 0) return;
+            const t = thumbs[current];
+            transition(() => {
+                lb.classList.remove("open");
+                t.style.viewTransitionName = "art-open";
+            })?.finished?.then(() => { t.style.viewTransitionName = ""; });
+            document.body.style.overflow = "";
+            current = -1;
+        }
+
+        thumbs.forEach((t, i) => t.closest("figure").addEventListener("click", () => open(i)));
+        document.getElementById("lb-prev").onclick = e => { e.stopPropagation(); show(current - 1); };
+        document.getElementById("lb-next").onclick = e => { e.stopPropagation(); show(current + 1); };
+        document.getElementById("lb-close").onclick = close;
+        lb.addEventListener("click", e => { if (e.target === lb) close(); });
+        document.addEventListener("keydown", e => {
+            if (current < 0) return;
+            if (e.key === "Escape") close();
+            if (e.key === "ArrowRight") show(current + 1);
+            if (e.key === "ArrowLeft") show(current - 1);
+        });
+        let sx = null;
+        lb.addEventListener("touchstart", e => { sx = e.touches[0].clientX; }, { passive: true });
+        lb.addEventListener("touchend", e => {
+            if (sx === null) return;
+            const dx = e.changedTouches[0].clientX - sx;
+            if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
+            sx = null;
+        });
     </script>
 </body>
 </html>

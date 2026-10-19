@@ -4,56 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CV - Anastasia Ahani</title>
+    <meta name="theme-color" content="#08120a">
+    <script>document.documentElement.classList.add("js")</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/site.css">
+    <script type="speculationrules">{"prerender":[{"where":{"href_matches":"/*"},"eagerness":"moderate"}]}</script>
     <style>
-        body {
-            background-color: #2d4a2b;
-            color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+        body { background: var(--forest-700); }
+        .cv { padding: 0 var(--gutter) clamp(80px, 10vw, 140px); }
+        .soon {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(24px, 5vw, 72px);
+            border-top: 1px solid var(--cream-faint);
+            padding-top: 40px;
         }
-
-        nav {
-            background-color: #1a2e1a;
-            padding: 15px;
-            text-align: center;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 20px;
-            font-size: 18px;
-            transition: opacity 0.3s;
-        }
-
-        nav a:hover {
-            opacity: 0.7;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
-        }
+        .soon p { font-size: clamp(24px, 2.6vw, 36px); line-height: 1.25; font-weight: 300; }
+        .soon p em { color: var(--sage); }
+        .soon ul { list-style: none; font-family: var(--mono); font-size: 13px; }
+        .soon li { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--cream-faint); }
+        .soon li span:first-child { color: var(--sage); text-transform: uppercase; letter-spacing: 0.06em; }
+        @media (max-width: 760px) { .soon { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="art.html">Art</a>
-        <a href="cv.html">CV</a>
-        <a href="blog.html">Blog</a>
+    <nav class="site-nav" aria-label="Main">
+        <a class="nav-home" href="index.html"><img src="assets/img/stas.webp" alt=""><span>Anastasia Ahani</span></a>
+        <ul class="nav-links">
+            <li><a href="index.html"><sup>01</sup>Home</a></li>
+            <li><a href="art.html"><sup>02</sup>Art</a></li>
+            <li><a href="cv.html" aria-current="page"><sup>03</sup>CV</a></li>
+            <li><a href="blog.html"><sup>04</sup>Blog</a></li>
+        </ul>
     </nav>
 
-    <div class="container">
-        <h1>CV</h1>
-        <p>Coming soon...</p>
-    </div>
+    <header class="page-head">
+        <span class="label">03 &nbsp;/&nbsp; The paper trail</span>
+        <h1 class="split">C<em>V</em></h1>
+    </header>
+
+    <main class="cv">
+        <div class="soon" data-reveal>
+            <p>The full CV is still <em>drying on the easel.</em> In the meantime, here's the short version.</p>
+            <!-- Replace with your real CV, or link a PDF: <a class="pill" href="cv.pdf">Download PDF</a> -->
+            <ul>
+                <li><span>Now</span><span>AI safety research, Harvard SEAS</span></li>
+                <li><span>Focus</span><span>Mechanistic interpretability</span></li>
+                <li><span>Also</span><span>Board member, AISST</span></li>
+                <li><span>Before</span><span>Quant, Goldman Sachs</span></li>
+            </ul>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-row" style="margin-top:0">
+            <span>&copy; 2026 Anastasia Ahani</span>
+            <nav aria-label="Footer"><a href="index.html">Home</a><a href="art.html">Art</a><a href="cv.html">CV</a><a href="blog.html">Blog</a></nav>
+        </div>
+    </footer>
+
+    <script src="assets/site.js" defer></script>
 </body>
 </html>
