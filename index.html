@@ -61,16 +61,12 @@
         #typed { color: var(--cream); border-right: 2px solid var(--strawberry); padding-right: 3px; }
 
         /* Your photo, held in a glass orb */
-        .hero-portrait {
-            position: absolute;
-            right: calc(var(--gutter) + 2vw);
-            top: clamp(100px, 17vh, 160px);
-            width: clamp(150px, 20vw, 300px);
+        .portrait {
+            position: relative;
+            width: clamp(180px, 22vw, 300px);
             aspect-ratio: 1;
-            z-index: 2;
-            animation: rise 1.1s 0.15s var(--ease) both;
         }
-        .hero-portrait .glass {
+        .portrait .glass {
             position: relative;
             width: 100%; height: 100%;
             border-radius: 50%;
@@ -78,8 +74,8 @@
             box-shadow: 0 40px 90px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(239, 232, 214, 0.4);
             transition: transform 0.6s var(--ease);
         }
-        .hero-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
-        .hero-portrait .glass::after {   /* glassy shine */
+        .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+        .portrait .glass::after {   /* glassy shine */
             content: "";
             position: absolute;
             inset: 0;
@@ -103,7 +99,7 @@
             pointer-events: none;
         }
         @keyframes spin { to { transform: rotate(1turn); } }
-        .hero-portrait figcaption {
+        .portrait figcaption {
             position: absolute;
             top: 100%;
             right: 0;
@@ -133,8 +129,7 @@
         }
 
         @media (max-width: 700px) {
-            .hero-portrait { top: 86px; width: 132px; right: var(--gutter); }
-            .hero-portrait figcaption, .hero-hint { display: none; }
+            .hero-hint { display: none; }
             .hero h1 { font-size: 19vw; }
             .hero h1 em { padding-left: 0.3em; }
         }
@@ -163,9 +158,9 @@
         .about { background: var(--forest-900); }
         .about-grid {
             display: grid;
-            grid-template-columns: 1.15fr 1fr;
+            grid-template-columns: auto 1fr;
             gap: clamp(32px, 6vw, 96px);
-            align-items: start;
+            align-items: center;
         }
         .about-statement {
             position: sticky;
@@ -181,7 +176,6 @@
         .about-body p { margin-bottom: 1.1em; color: var(--cream-dim); font-size: 19px; }
         .about-body p:first-child { color: var(--cream); }
         .facts {
-            margin-top: 32px;
             border-top: 1px solid var(--cream-faint);
             font-family: var(--mono);
             font-size: 13px;
@@ -392,16 +386,11 @@
         <canvas class="manifold-canvas" aria-hidden="true"></canvas>
         <div class="hero-scrim"></div>
 
-        <figure class="hero-portrait">
-            <div class="glass" data-tilt><img src="assets/img/stas.webp" alt="Portrait of Anastasia"></div>
-            <span class="iris-ring"></span>
-        </figure>
-
         <div class="hero-content">
             <span class="label">AI safety @ Harvard &nbsp;/ ex-finance &nbsp;/ interpretability research &nbsp;/ painting</span>
             <h1 class="split">Anastasia<br><em>Ahani</em></h1>
             <!-- Edit the rotating words here -->
-            <p class="hero-typed">I'm interested in <span id="typed" data-words='["interpretability", "AI safety", "honesty & deception in models", "oil painting", "robots that behave"]'>interpretability</span></p>
+            <p class="hero-typed">I'm interested in <span id="typed" data-words='["interpretability", "AI safety", "honesty & deception in models", "oil painting"]'>interpretability</span></p>
         </div>
     </header>
 
@@ -416,20 +405,16 @@
                 <div class="shape"><canvas data-shape="manifold"></canvas></div>
                 <span class="label"><span>01</span><span>Look inside</span></span>
                 <h3>Interpret&shy;ability</h3>
-                <p>Opening up neural networks to see how they actually work. Models store ideas on strange curved surfaces, and I'm especially fascinated by honesty and deception: can we tell when a model knows something it isn't saying?</p>
             </a>
             <a class="panel" href="https://aisafetyteam.org" target="_blank" rel="noopener" data-bloom data-reveal style="--d: .1s">
                 <div class="shape"><canvas data-shape="cage"></canvas></div>
                 <span class="label"><span>02</span><span>Look out</span></span>
                 <h3>AI <em>Safety</em></h3>
-                <p>Building the guardrails so powerful AI stays something we can understand and trust. I help run AISST, and I'm endlessly curious about robots that act reliably in the real world.</p>
             </a>
             <a class="panel" href="art.html" data-bloom data-reveal style="--d: .2s">
                 <div class="shape"><svg data-shape="blob" viewBox="-100 -100 200 200"></svg></div>
                 <span class="label"><span>03</span><span>Look slowly</span></span>
                 <h3>Painting</h3>
-                <p>Oil, mostly figures: hands, backs, faces in candlelight. It's where I go to look slowly, and it's the half of me that keeps the other half honest.</p>
-                <span class="go">See the paintings &rarr;</span>
             </a>
         </div>
     </section>
@@ -441,21 +426,15 @@
             <span class="label">02 / 04</span>
         </div>
         <div class="about-grid">
-            <p class="about-statement" data-reveal>
-                I look inside AI models to figure out what they're <em>really</em> thinking&mdash;and I paint people for the <span class="straw">exact same reason.</span>
-            </p>
-            <div class="about-body" data-reveal style="--d: .12s">
-                <!-- Edit your bio here -->
-                <p>Hi, I'm Anastasia (most people call me Stas)! I'm an AI safety researcher at Harvard SEAS, working on mechanistic interpretability&mdash;cracking neural networks open to understand how they work, and especially whether they're being honest with us.</p>
-                <p>Before this I spent several years in industry as a quant at Goldman, and somewhere in there I realized I was hungry for work that actually mattered to me, so I went back to school. Now I get to spend my days on the questions that kept me up at night anyway.</p>
-                <p>And when I'm not staring at activations, I'm usually staring at a canvas. Painting and interpretability turn out to be weirdly similar: you look at something long enough and carefully enough that it finally shows you what's underneath.</p>
-                <ul class="facts">
-                    <li><span>Now</span><span>AI safety research, Harvard SEAS</span></li>
-                    <li><span>Also</span><span>Board member, AISST</span></li>
-                    <li><span>Before</span><span>Quant, Goldman Sachs</span></li>
-                    <li><span>Medium</span><span>Oil on canvas</span></li>
-                </ul>
-            </div>
+            <figure class="portrait" data-reveal>
+                <div class="glass" data-tilt><img src="assets/img/stas.webp" alt="Portrait of Anastasia"></div>
+                <span class="iris-ring"></span>
+            </figure>
+            <ul class="facts" data-reveal style="--d: .12s">
+                <li><span>Now</span><span>AI safety research, Harvard SEAS</span></li>
+                <li><span>Also</span><span>Board member, AIST</span></li>
+                <li><span>Before</span><span>Quant, Goldman Sachs</span></li>
+            </ul>
         </div>
     </section>
 
