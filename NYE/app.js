@@ -6,7 +6,6 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const canHover = matchMedia('(hover: hover)').matches;
 
   const store = {
     get(k, fallback) { try { const v = localStorage.getItem('gaed:' + k); return v == null ? fallback : JSON.parse(v); } catch { return fallback; } },
@@ -52,53 +51,49 @@
   tick(); setInterval(tick, 1000);
 
   /* ======================= Atmosphere ======================= */
-  const lantern = $('.atmos__lantern');
-  let tx = innerWidth / 2, ty = innerHeight * 0.4, lx = tx, ly = ty, lastMove = 0;
-  addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { tx = e.clientX; ty = e.clientY; lastMove = performance.now(); } }, { passive: true });
-  function lanternLoop(t) {
-    if (!canHover || t - lastMove > 6000) { // wander like a carried candle
-      tx = innerWidth * (0.5 + 0.32 * Math.sin(t / 5200)) ;
-      ty = innerHeight * (0.42 + 0.22 * Math.sin(t / 3700 + 1.3));
-    }
-    lx += (tx - lx) * 0.07; ly += (ty - ly) * 0.07;
-    const r = lantern.getBoundingClientRect();
-    lantern.style.setProperty('--lx', ((lx - r.left) / r.width * 100).toFixed(2) + '%');
-    lantern.style.setProperty('--ly', ((ly - r.top) / r.height * 100).toFixed(2) + '%');
-    requestAnimationFrame(lanternLoop);
-  }
-  requestAnimationFrame(lanternLoop);
-
-  // Embers
+  // Embers — one pre-rendered glow sprite, time-based motion, paused when hidden
   (function embers() {
     if (reduceMotion) return;
-    const c = $('.atmos__embers'); const ctx = c.getContext('2d');
-    let W, H, dpr; const N = innerWidth < 700 ? 22 : 46; const ps = [];
-    const resize = () => { dpr = Math.min(devicePixelRatio || 1, 2); W = c.width = innerWidth * dpr; H = c.height = innerHeight * dpr; };
-    resize(); addEventListener('resize', resize);
+    const c = $('.atmos__embers'); const ctx = c.getContext('2d', { alpha: true });
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    const N = innerWidth < 700 ? 16 : 30;
+    const sprite = document.createElement('canvas');
+    const S = 32; sprite.width = sprite.height = S;
+    const sctx = sprite.getContext('2d');
+    const g = sctx.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+    g.addColorStop(0, 'rgba(255,214,140,1)'); g.addColorStop(0.35, 'rgba(255,150,60,.55)'); g.addColorStop(1, 'rgba(255,110,40,0)');
+    sctx.fillStyle = g; sctx.fillRect(0, 0, S, S);
+    let W = 0, H = 0;
+    const resize = () => {
+      // only on width changes, so mobile toolbars showing/hiding don't wipe the canvas
+      const w = Math.round(innerWidth * dpr), h = Math.round(Math.max(innerHeight, screen.height || 0) * dpr);
+      if (w === W && h <= H) return;
+      W = c.width = w; H = c.height = h;
+    };
+    resize(); addEventListener('resize', resize, { passive: true });
+    const ps = [];
     const spawn = (p = {}) => Object.assign(p, {
-      x: Math.random() * W, y: H + Math.random() * H * 0.5, r: (Math.random() * 1.6 + 0.5) * dpr,
-      vy: (Math.random() * 0.35 + 0.15) * dpr, vx: (Math.random() - 0.5) * 0.2 * dpr,
-      life: 0, max: 500 + Math.random() * 600, ph: Math.random() * 6.28, hue: 22 + Math.random() * 22,
+      x: Math.random() * W, y: H * (1 + Math.random() * 0.3), s: (Math.random() * 7 + 5) * dpr,
+      vy: (Math.random() * 14 + 8) * dpr, drift: (Math.random() - 0.5) * 6 * dpr,
+      t: 0, life: 14 + Math.random() * 16, ph: Math.random() * 6.28,
     });
-    for (let i = 0; i < N; i++) { const p = spawn(); p.y = Math.random() * H; ps.push(p); }
-    let running = true;
-    document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) requestAnimationFrame(draw); });
-    function draw() {
-      if (!running) return;
-      ctx.clearRect(0, 0, W, H);
-      ctx.globalCompositeOperation = 'lighter';
-      for (const p of ps) {
-        p.life++; p.y -= p.vy; p.x += p.vx + Math.sin((p.life + p.ph * 100) / 60) * 0.25 * dpr;
-        const a = Math.max(0, Math.sin(Math.PI * p.life / p.max)) * (0.55 + 0.45 * Math.sin(p.life / 7 + p.ph));
-        if (p.life > p.max || p.y < -10) spawn(p);
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-        g.addColorStop(0, `hsla(${p.hue},100%,70%,${a})`);
-        g.addColorStop(1, `hsla(${p.hue},100%,50%,0)`);
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, 6.283); ctx.fill();
+    for (let i = 0; i < N; i++) { const p = spawn(); p.y = Math.random() * H; p.t = Math.random() * p.life; ps.push(p); }
+    let last = performance.now(), visible = !document.hidden;
+    document.addEventListener('visibilitychange', () => { visible = !document.hidden; last = performance.now(); });
+    function frame(now) {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (visible && !document.body.classList.contains('lb-open')) {
+        ctx.clearRect(0, 0, W, H);
+        for (const p of ps) {
+          p.t += dt; p.y -= p.vy * dt; p.x += (p.drift + Math.sin(p.t * 0.9 + p.ph) * 10 * dpr) * dt;
+          if (p.t > p.life || p.y < -20) spawn(p);
+          ctx.globalAlpha = Math.max(0, Math.sin(Math.PI * p.t / p.life)) * (0.6 + 0.4 * Math.sin(p.t * 3 + p.ph));
+          ctx.drawImage(sprite, p.x - p.s / 2, p.y - p.s / 2, p.s, p.s);
+        }
       }
-      requestAnimationFrame(draw);
+      requestAnimationFrame(frame);
     }
-    requestAnimationFrame(draw);
+    requestAnimationFrame(frame);
   })();
 
   // Deepen background once past the hero
@@ -126,6 +121,11 @@
   }
   function showTab(id, { scroll = false } = {}) {
     if (!TAB_IDS.includes(id)) id = 'schedule';
+    const navTop = hero.offsetTop + hero.offsetHeight;
+    // Already below the hero? Jump to the top of the content *before* swapping panels,
+    // so the page never lurches when a long panel is replaced by a short one.
+    const below = scrollY > navTop + 2;
+    if (scroll && below) scrollTo({ top: navTop, behavior: 'instant' });
     tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.tab === id)));
     $$('[data-panel]').forEach((p) => {
       const on = p.dataset.panel === id;
@@ -136,9 +136,8 @@
     const btn = tabs.find((t) => t.dataset.tab === id);
     if (btn) { const bar = btn.parentElement; bar.scrollTo({ left: btn.offsetLeft - (bar.clientWidth - btn.offsetWidth) / 2, behavior: 'smooth' }); }
     if (currentTab !== id) { currentTab = id; tabHooks[id] && tabHooks[id](); }
-    if (scroll) {
-      const top = hero.offsetTop + hero.offsetHeight;
-      if (scrollY < top - 2 || scroll === 'force') scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
+    if (scroll && !below && (scrollY < navTop - 2 || scroll === 'force')) {
+      scrollTo({ top: navTop, behavior: reduceMotion ? 'auto' : 'smooth' });
     }
   }
   tabs.forEach((t) => t.addEventListener('click', () => {
@@ -283,36 +282,50 @@
     };
   });
   const PHOTOS = new Set(D.photos || []);
-  let photosLoaded = 0;
-  function renderFaces(list) {
-    if (!list.length) { facesEl.innerHTML = '<p class="faces-empty">No one by that name in the garden… yet.</p>'; return; }
-    facesEl.innerHTML = list.map((g, i) => `
-      <figure class="face" style="animation-delay:${Math.min(i * 0.025, 0.8)}s" data-slug="${g.slug}">
+  // Build every portrait once; searching and shuffling only show/hide/reorder them.
+  let photosLoaded = 0, facesBuilt = false;
+  const faceEmpty = document.createElement('p');
+  faceEmpty.className = 'faces-empty'; faceEmpty.textContent = 'No one by that name in the garden… yet.'; faceEmpty.hidden = true;
+  function buildFaces() {
+    facesBuilt = true;
+    facesEl.innerHTML = guests.map((g, i) => `
+      <figure class="face" style="animation-delay:${Math.min(i * 0.02, 0.6)}s" data-slug="${g.slug}" data-name="${esc(g.name.toLowerCase())}">
         <div class="face__frame">
           <div class="face__oval">
             <div class="face__paint" style="background-position:${g.px}% ${g.py}%"></div>
             <span class="face__initials" aria-hidden="true">${esc(g.initials)}</span>
-            ${PHOTOS.has(g.slug) ? `<img class="face__photo" alt="${esc(g.name)}" loading="lazy" src="faces/${g.slug}.jpg">` : ''}
+            ${PHOTOS.has(g.slug) ? `<img class="face__photo" alt="${esc(g.name)}" loading="lazy" decoding="async" src="faces/${g.slug}.jpg">` : ''}
           </div>
         </div>
         <figcaption class="face__name"><span class="face__first">${esc(g.first)}</span><span class="face__last">${esc(g.last)}</span></figcaption>
       </figure>`).join('');
+    facesEl.appendChild(faceEmpty);
     $$('.face__photo', facesEl).forEach((img) => {
       const ok = () => { img.classList.add('is-loaded'); img.parentElement.querySelector('.face__initials').hidden = true; photosLoaded++; if (photosLoaded >= 6) $('[data-quiz]').hidden = false; };
       if (img.complete && img.naturalWidth) ok();
       else { img.addEventListener('load', ok, { once: true }); img.addEventListener('error', () => img.remove(), { once: true }); }
     });
-    $('[data-face-count]').textContent = list.length === guests.length ? `${guests.length} revellers` : `${list.length} of ${guests.length}`;
+    // after the entrance, later show/hide shouldn't replay the stagger
+    setTimeout(() => facesEl.classList.add('is-settled'), 1600);
+    filterFaces();
   }
   const searchEl = $('[data-face-search]');
-  const filterFaces = () => {
+  function filterFaces() {
     const q = searchEl.value.trim().toLowerCase();
-    renderFaces(q ? guests.filter((g) => g.name.toLowerCase().includes(q)) : guests);
-  };
-  searchEl.addEventListener('input', () => { photosLoaded = 0; filterFaces(); });
+    let n = 0;
+    $$('.face', facesEl).forEach((f) => { const on = !q || f.dataset.name.includes(q); f.hidden = !on; if (on) n++; });
+    faceEmpty.hidden = n > 0;
+    $('[data-face-count]').textContent = n === guests.length ? `${guests.length} revellers` : `${n} of ${guests.length}`;
+  }
+  let searchT;
+  searchEl.addEventListener('input', () => { clearTimeout(searchT); searchT = setTimeout(filterFaces, 60); });
   $('[data-shuffle-faces]').addEventListener('click', () => {
-    guests = guests.map((g) => [Math.random(), g]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
-    photosLoaded = 0; filterFaces();
+    const els = $$('.face', facesEl);
+    facesEl.classList.add('is-fading');
+    setTimeout(() => {
+      els.map((el) => [Math.random(), el]).sort((a, b) => a[0] - b[0]).forEach(([, el]) => facesEl.insertBefore(el, faceEmpty));
+      facesEl.classList.remove('is-fading');
+    }, 220);
   });
   $('[data-quiz]').addEventListener('click', (e) => {
     const on = facesEl.classList.toggle('is-quiz');
@@ -321,7 +334,7 @@
     if (on) toast('Who’s behind the mask? Tap to reveal');
   });
   facesEl.addEventListener('click', (e) => { const f = e.target.closest('.face'); if (f && facesEl.classList.contains('is-quiz')) f.classList.add('is-revealed'); });
-  tabHooks.faces = () => { if (!facesEl.children.length) renderFaces(guests); };
+  tabHooks.faces = () => { if (!facesBuilt) buildFaces(); };
 
   /* ======================= Mood board ======================= */
   const TAGS = [
@@ -369,37 +382,53 @@
     });
   }, { rootMargin: '0px 0px 120px 0px' });
 
-  let lastCols = 0;
+  // Each pin element is built once and reused, so filtering / shuffling never re-downloads
+  // or re-fades images — tiles just glide into their new columns.
+  const pinEls = new Map();
+  const tagLabel = (p) => p.tags.split('').map((t) => TAGNAME[t]).filter(Boolean).join(', ');
+  function pinEl(p) {
+    let el = pinEls.get(p.h);
+    if (el) return el;
+    el = document.createElement('div');
+    el.className = 'pin'; el.tabIndex = 0; el.setAttribute('role', 'button');
+    el.dataset.h = p.h; el.style.aspectRatio = `1 / ${p.r}`;
+    const on = favs.has(p.h);
+    el.innerHTML = `<img src="${pinImg(p.h, '736x')}" alt="" loading="lazy" decoding="async">
+      <button class="pin__fav${on ? ' is-on' : ''}" data-fav="${p.h}" aria-label="Favourite" aria-pressed="${on}">${on ? '♥' : '♡'}</button>`;
+    const img = el.firstElementChild;
+    const done = () => img.classList.add('is-loaded');
+    img.complete && img.naturalWidth ? done() : img.addEventListener('load', done, { once: true });
+    pinIO.observe(el);
+    pinEls.set(p.h, el);
+    return el;
+  }
+  let lastCols = 0, boardBuilt = false, fadeT;
   function colCount() {
     const w = boardEl.clientWidth || innerWidth;
     return w < 520 ? 2 : w < 860 ? 3 : w < 1200 ? 4 : 5;
   }
-  function layoutBoard() {
-    if (!pins.length) {
-      emptyEl.hidden = false;
-      emptyEl.textContent = 'The board is being gathered — check back very soon.';
-      return;
-    }
+  function placeBoard() {
     visible = order.filter((p) => (filter === 'all' || p.tags.includes(filter)) && (!favOnly || favs.has(p.h)));
     emptyEl.hidden = !!visible.length;
     if (!visible.length) emptyEl.textContent = favOnly ? 'Nothing hearted yet — tap ♡ on anything that speaks to you.' : 'Nothing here.';
     const n = colCount(); lastCols = n;
-    const cols = Array.from({ length: n }, () => ({ h: 0, items: [] }));
+    const cols = Array.from({ length: n }, () => { const d = document.createElement('div'); d.className = 'board__col'; d._h = 0; return d; });
     visible.forEach((p, k) => {
-      const c = cols.reduce((a, b) => (b.h < a.h - 0.01 ? b : a));
-      c.items.push([p, k]); c.h += p.r + 0.08;
+      const c = cols.reduce((a, b) => (b._h < a._h - 0.01 ? b : a));
+      const el = pinEl(p);
+      el.dataset.k = k;
+      el.setAttribute('aria-label', `Open image ${k + 1}${p.tags ? ': ' + tagLabel(p) : ''}`);
+      c.appendChild(el); c._h += p.r + 0.08;
     });
-    boardEl.innerHTML = cols.map((c) => `<div class="board__col">${c.items.map(([p, k]) => `
-      <div class="pin" role="button" tabindex="0" data-k="${k}" data-h="${p.h}" style="aspect-ratio:1/${p.r}" aria-label="Open image ${k + 1}${p.tags ? ': ' + esc(p.tags.split('').map((t) => TAGNAME[t]).filter(Boolean).join(', ')) : ''}">
-        <img src="${pinImg(p.h, '736x')}" alt="" loading="lazy" decoding="async">
-        <button class="pin__fav${favs.has(p.h) ? ' is-on' : ''}" data-fav="${p.h}" aria-label="Favourite" aria-pressed="${favs.has(p.h)}">${favs.has(p.h) ? '♥' : '♡'}</button>
-      </div>`).join('')}</div>`).join('');
-    $$('.pin', boardEl).forEach((el) => {
-      const img = $('img', el);
-      const done = () => img.classList.add('is-loaded');
-      img.complete && img.naturalWidth ? done() : img.addEventListener('load', done, { once: true });
-      pinIO.observe(el);
-    });
+    boardEl.replaceChildren(...cols);
+    boardBuilt = true;
+  }
+  function layoutBoard({ animate = true } = {}) {
+    if (!pins.length) { emptyEl.hidden = false; emptyEl.textContent = 'The board is being gathered — check back very soon.'; return; }
+    if (!animate || !boardBuilt || reduceMotion) { placeBoard(); return; }
+    clearTimeout(fadeT);
+    boardEl.classList.add('is-fading');
+    fadeT = setTimeout(() => { placeBoard(); requestAnimationFrame(() => boardEl.classList.remove('is-fading')); }, 200);
   }
   function toggleFav(h) {
     favs.has(h) ? favs.delete(h) : favs.add(h);
@@ -417,8 +446,8 @@
     if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('pin')) { e.preventDefault(); openLightbox(+e.target.dataset.k, e.target); }
   });
   let resizeT;
-  addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (currentTab === 'moodboard' && colCount() !== lastCols) layoutBoard(); }, 150); });
-  tabHooks.moodboard = () => { if (!boardEl.children.length || colCount() !== lastCols) layoutBoard(); };
+  addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (currentTab === 'moodboard' && colCount() !== lastCols) layoutBoard({ animate: false }); }, 150); });
+  tabHooks.moodboard = () => { if (!boardBuilt || colCount() !== lastCols) layoutBoard({ animate: false }); };
 
   // Lightbox
   const lb = $('[data-lightbox]');
@@ -443,10 +472,10 @@
     [1, -1].forEach((d) => { const n = visible[(lbIndex + d + visible.length) % visible.length]; if (n) new Image().src = pinImg(n.h, '736x'); });
   }
   function openLightbox(i, from) {
-    lbReturn = from || null; lb.hidden = false; document.body.style.overflow = 'hidden'; lbShow(i);
+    lbReturn = from || null; lb.hidden = false; document.body.style.overflow = 'hidden'; document.body.classList.add('lb-open'); lbShow(i);
     $('[data-lb="close"]', lb).focus();
   }
-  function closeLightbox() { lb.hidden = true; document.body.style.overflow = ''; lbReturn && lbReturn.focus && lbReturn.focus({ preventScroll: true }); }
+  function closeLightbox() { lb.hidden = true; document.body.style.overflow = ''; document.body.classList.remove('lb-open'); lbReturn && lbReturn.focus && lbReturn.focus({ preventScroll: true }); }
   lb.addEventListener('click', (e) => {
     const a = e.target.closest('[data-lb]');
     if (!a) { if (e.target === lb || e.target.classList.contains('lightbox__fig')) closeLightbox(); return; }
