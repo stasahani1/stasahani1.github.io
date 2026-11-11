@@ -104,13 +104,14 @@ body.is-deep .atmos__shade { opacity: .45; }
 .hero__pre { color: var(--gold); font-size: clamp(.8rem, 2.4vw, 1rem); letter-spacing: .3em; margin: 0 0 2.2rem; }
 .hero__title {
   font-family: var(--display); font-weight: 300;
-  font-size: clamp(3.1rem, 11.5vw, 10rem);
-  line-height: .88; margin: 0; letter-spacing: -.01em;
+  font-size: clamp(2.45rem, 8.4vw, 7.6rem);
+  line-height: .95; margin: 0; letter-spacing: -.01em;
   text-shadow: 0 0 40px rgba(255, 170, 90, .25), 0 2px 30px rgba(0,0,0,.8);
 }
 .hero__title span { display: block; }
-.hero__the { font-family: var(--fell); font-size: .22em; letter-spacing: .5em; color: var(--gold-2); margin: 0 0 .5em .5em; }
+.hero__at { font-family: var(--display); font-style: italic; font-size: .5em; line-height: 1.1; color: var(--rose); margin: .08em 0 .02em; }
 .hero__title em { font-style: italic; color: var(--rose); font-weight: 300; }
+.hero__sub { letter-spacing: .01em; }
 .hero__sub { font-family: var(--display); font-style: italic; font-size: clamp(1.25rem, 3.4vw, 1.9rem); color: var(--cream-2); margin: 1.6rem 0 .2rem; }
 .hero__dates { color: var(--cream-3); letter-spacing: .2em; font-size: clamp(.78rem, 2.2vw, .95rem); margin: .4rem 0 2.6rem; }
 
@@ -187,17 +188,19 @@ body.is-deep .atmos__shade { opacity: .45; }
   border-top: 1px solid var(--gold-line); border-bottom: 1px solid var(--gold-line);
 }
 .tabs__inner {
-  position: relative; max-width: 1100px; margin: 0 auto;
-  display: flex; justify-content: center; overflow-x: auto; scrollbar-width: none;
+  position: relative; max-width: 1280px; margin: 0 auto;
+  display: flex; justify-content: flex-start; overflow-x: auto; scrollbar-width: none;
 }
 .tabs__inner::-webkit-scrollbar { display: none; }
 .tabs button {
   flex: 0 0 auto; background: none; border: 0; cursor: pointer;
-  font-family: var(--fell); font-size: clamp(.92rem, 2.6vw, 1.12rem); letter-spacing: .08em;
-  color: var(--cream-3); padding: 1.05rem clamp(.8rem, 2.6vw, 1.8rem) 1rem;
+  font-family: var(--fell); font-size: clamp(.9rem, 2.4vw, 1.05rem); letter-spacing: .06em;
+  color: var(--cream-3); padding: 1.05rem clamp(.7rem, 1.7vw, 1.4rem) 1rem;
   transition: color .4s; white-space: nowrap;
 }
 .tabs button:hover { color: var(--cream); }
+.tabs button:first-of-type { margin-left: auto; }
+.tabs button:last-of-type { margin-right: auto; }
 .tabs button[aria-selected="true"] { color: var(--cream); }
 .tabs__num { color: var(--gold); font-size: .72em; margin-right: .55em; letter-spacing: .1em; }
 .tabs__ink {
@@ -355,7 +358,7 @@ h3 { font-size: clamp(1.7rem, 4vw, 2.4rem); }
   box-shadow: 0 10px 30px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.6);
   transition: transform .6s var(--ease), box-shadow .6s;
 }
-.face:hover .face__frame { transform: translateY(-4px) rotateX(4deg); box-shadow: 0 16px 40px rgba(0,0,0,.6), 0 0 30px rgba(227,200,141,.3); }
+.face:hover .face__frame { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.6), 0 0 30px rgba(227,200,141,.3); }
 .face__oval { position: relative; width: 100%; height: 100%; border-radius: 50% / 50%; overflow: hidden; background: var(--ink-3); box-shadow: inset 0 0 0 2px rgba(0,0,0,.6), inset 0 0 30px rgba(0,0,0,.7); }
 .face__paint { position: absolute; inset: 0; background-image: url(img/triptych-bg.jpg); background-size: 1200% auto; filter: brightness(.55) saturate(.9); transition: filter .6s, transform 1.2s var(--ease); }
 .face:hover .face__paint { filter: brightness(.75) saturate(1.1); transform: scale(1.06); }
@@ -563,7 +566,6 @@ h3 { font-size: clamp(1.7rem, 4vw, 2.4rem); }
   .card--travel { grid-row: auto; }
   .story { grid-template-columns: 1fr; }
   .motifs { grid-template-columns: repeat(2, 1fr); }
-  .tabs__inner { justify-content: flex-start; }
 }
 @media (max-width: 640px) {
   body { font-size: 17px; }
@@ -602,3 +604,47 @@ h3 { font-size: clamp(1.7rem, 4vw, 2.4rem); }
   .atmos__embers { display: none; }
   .wing { transition-duration: .01ms !important; }
 }
+
+/* ---------- Names & Faces: flip for phone number ---------- */
+.face__frame { cursor: pointer; }
+.face__flip { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .8s cubic-bezier(.3,.7,.2,1); }
+.face.is-flipped .face__flip { transform: rotateY(180deg); }
+.face__side { position: absolute; inset: 0; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.face__back {
+  transform: rotateY(180deg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem; text-align: center; padding: 0 10%;
+  background: radial-gradient(ellipse at 50% 35%, #2a1f15, #110d09 75%);
+}
+.face__back-name { font-family: var(--fell); color: var(--gold); font-size: .72rem; letter-spacing: .16em; }
+.face__phone { font-family: var(--display); font-size: clamp(.92rem, 2.1vw, 1.12rem); line-height: 1.2; color: var(--cream); font-variant-numeric: lining-nums; }
+.face__links { display: flex; gap: .4rem; flex-wrap: wrap; justify-content: center; margin-top: .2rem; }
+.face__links a { font-family: var(--fell); font-size: .7rem; letter-spacing: .08em; color: var(--ink); background: var(--gold-2); border-radius: 999px; padding: .18rem .6rem; text-decoration: none; }
+.face__links a:hover { background: #fff3d6; }
+@media (max-width: 640px) {
+  .face__phone { font-size: .7rem; white-space: nowrap; letter-spacing: -.01em; }
+  .face__back-name { font-size: .6rem; }
+  .face__links a { font-size: .6rem; padding: .14rem .45rem; }
+}
+
+/* ---------- Estate text cards ---------- */
+.room--text { display: flex; flex-direction: column; justify-content: flex-end; min-height: 220px; padding: 0; background: radial-gradient(ellipse at 50% 30%, rgba(201,164,92,.18), transparent 60%), url(img/triptych-bg-dark.jpg) 78% 60% / 900% auto; }
+.room--text figcaption { position: relative; background: linear-gradient(to top, rgba(10,9,7,.92), rgba(10,9,7,.2)); padding-top: 3rem; }
+.room__glyph { position: absolute; top: 1.4rem; left: 50%; transform: translateX(-50%); width: 64px; height: 64px; color: var(--gold-2); filter: drop-shadow(0 0 12px rgba(227,200,141,.45)); }
+.room__glyph svg { width: 100%; height: 100%; }
+
+/* ---------- Password gate ---------- */
+.gate-page { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding: 24px 16px; text-align: center; transition: opacity .7s ease; }
+.gate-page.is-leaving { opacity: 0; }
+.gate-card { width: min(540px, 100%); padding: clamp(1.8rem, 5vw, 2.8rem) clamp(1.3rem, 5vw, 2.6rem); background: rgba(12,10,8,.86); border: 1px solid var(--gold-line-2); border-radius: 6px; box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 60px rgba(255,170,90,.06); }
+.gate-card .fell { color: var(--gold); letter-spacing: .3em; font-size: .78rem; margin: 0 0 1rem; }
+.gate-card h1 { font-family: var(--display); font-weight: 300; font-size: clamp(1.9rem, 7vw, 2.6rem); line-height: 1.05; margin: 0; }
+.gate-card h1 em { color: var(--rose); font-size: .55em; display: block; margin: .25em 0 .15em; }
+.gate-card p.gate-sub { font-family: var(--display); font-style: italic; color: var(--cream-2); font-size: 1.1rem; margin: .9rem 0 1.6rem; }
+.gate-input { width: 100%; font: inherit; font-family: var(--display); font-size: 1.25rem; text-align: center; letter-spacing: .08em; color: var(--cream); background: rgba(0,0,0,.35); border: 1px solid var(--gold-line-2); border-radius: 999px; padding: .75rem 1.2rem; outline: none; transition: border-color .3s, box-shadow .3s; }
+.gate-input:focus { border-color: var(--gold-2); box-shadow: 0 0 0 3px rgba(227,200,141,.15); }
+.gate-input.is-wrong { animation: shake .45s; border-color: var(--rose); }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+.gate-msg { min-height: 1.4em; color: var(--rose); font-size: .95rem; margin: .7rem 0 .5rem; }
+.gate-card .btn { width: 100%; padding: .85rem 1.3rem; font-size: 1rem; }
+.gate-remember { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-top: 1rem; color: var(--cream-3); font-size: .9rem; cursor: pointer; }
+.gate-remember input { accent-color: var(--gold); }
