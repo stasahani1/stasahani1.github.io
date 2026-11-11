@@ -267,3 +267,10 @@ body::after {
 
 .page-head { position: relative; overflow: hidden; }
 .page-head > *:not(.orbs) { position: relative; z-index: 2; }
+
+/* "Schedule a Meeting" nav tab: shorter label on phones */
+.nav-short { display: none; }
+@media (max-width: 760px) {
+    .nav-long { display: none; }
+    .nav-short { display: inline; }
+}
