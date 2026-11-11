@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a time - Anastasia Ahani</title>
+    <meta name="description" content="Grab a slot on Anastasia Ahani's calendar: coffee, research chats, walks, overdue catch-ups.">
+    <meta property="og:title" content="Book a time with Anastasia">
+    <meta property="og:description" content="Grab a slot on my calendar: coffee, research chats, walks, overdue catch-ups.">
+    <meta name="theme-color" content="#08120a">
+    <link rel="canonical" href="https://anastasiaahani.com/cal/">
+    <script>document.documentElement.classList.add("js")</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://calendly.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/site.css">
+    <style>
+        body { background: var(--forest-900); }
+
+        .page-head { padding-bottom: clamp(28px, 4vw, 48px); }
+        .page-head h1 .flower {
+            display: inline-block;
+            font-style: normal;
+            font-size: 0.32em;
+            vertical-align: 0.9em;
+            margin-left: 0.12em;
+            color: var(--strawberry);
+            animation: spin 14s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* "for a ___" line that cycles through reasons to meet */
+        .reasons {
+            margin-top: clamp(18px, 2.4vw, 30px);
+            font-size: clamp(22px, 2.6vw, 34px);
+            font-weight: 300;
+            line-height: 1.25;
+            color: var(--cream-dim);
+        }
+        .reasons .slot {
+            display: inline-block;
+            font-style: italic;
+            color: var(--sage);
+            transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+        }
+        .reasons .slot.out { opacity: 0; transform: translateY(-0.4em) rotate(-2deg); }
+
+        /* Live "what is she up to right now" status */
+        .status {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 18px;
+            margin-top: 28px;
+            font-family: var(--mono);
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--cream-dim);
+        }
+        .status .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--sage);
+            box-shadow: 0 0 0 0 rgba(139, 199, 143, 0.6);
+            animation: pulse 2.4s var(--ease) infinite;
+        }
+        .status .dot.zzz { background: var(--lapis); box-shadow: none; animation: none; }
+        @keyframes pulse { 70% { box-shadow: 0 0 0 9px rgba(139, 199, 143, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 199, 143, 0); } }
+        .status .live { display: inline-flex; align-items: center; gap: 10px; }
+        .status .mood { color: var(--cream); text-transform: none; letter-spacing: 0.02em; font-size: 13px; }
+
+        /* The booking widget, framed like a little painting */
+        .booking { padding: 0 var(--gutter) clamp(72px, 9vw, 120px); }
+        .frame {
+            position: relative;
+            max-width: 1060px;
+            margin: 0 auto;
+            padding: clamp(6px, 1vw, 12px);
+            background: var(--cream);
+            border-radius: 20px;
+            box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--cream-faint);
+        }
+        .frame .calendly-inline-widget {
+            min-width: 280px;
+            height: 720px;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #fff;
+        }
+        @media (max-width: 760px) { .frame .calendly-inline-widget { height: 1000px; } }
+        .sticker {
+            position: absolute;
+            z-index: 2;
+            display: grid;
+            place-items: center;
+            width: clamp(44px, 5vw, 60px);
+            height: clamp(44px, 5vw, 60px);
+            border-radius: 50%;
+            font-size: clamp(22px, 2.6vw, 30px);
+            line-height: 1;
+            pointer-events: none;
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.6);
+        }
+        .sticker.s1 { top: -18px; left: -14px; background: var(--strawberry); color: var(--cream); transform: rotate(-14deg); }
+        .sticker.s2 { bottom: -16px; right: -12px; background: var(--lapis); color: var(--ink); transform: rotate(10deg); }
+        @media (max-width: 560px) {
+            .booking { padding-inline: 10px; }
+            .sticker.s1 { left: -4px; }
+            .sticker.s2 { right: -2px; }
+        }
+
+        .fine {
+            max-width: 1060px;
+            margin: 26px auto 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            font-family: var(--mono);
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            color: var(--cream-dim);
+        }
+
+        /* Shown after someone books */
+        .booked-toast {
+            position: fixed;
+            left: 50%;
+            bottom: 28px;
+            z-index: 60;
+            transform: translate(-50%, calc(100% + 60px));
+            visibility: hidden;
+            padding: 14px 22px;
+            border-radius: 999px;
+            background: var(--cream);
+            color: var(--ink);
+            font-size: 18px;
+            box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+            transition: transform 0.6s var(--ease), visibility 0s linear 0.6s;
+            white-space: nowrap;
+        }
+        .booked-toast em { color: var(--strawberry); }
+        .booked-toast.show { transform: translate(-50%, 0); visibility: visible; transition-delay: 0s; }
+        .petal {
+            position: fixed;
+            z-index: 59;
+            pointer-events: none;
+            font-size: 26px;
+            line-height: 1;
+            animation: float var(--t, 2.6s) var(--ease) forwards;
+        }
+        @keyframes float {
+            from { transform: translate(0, 0) rotate(0); opacity: 1; }
+            to { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="site-nav" aria-label="Main">
+        <a class="nav-home" href="../index.html"><img src="../assets/img/stas.webp" alt=""><span>Anastasia Ahani</span></a>
+        <ul class="nav-links">
+            <li><a href="../index.html"><sup>01</sup>Home</a></li>
+            <li><a href="../art.html"><sup>02</sup>Art</a></li>
+            <li><a href="../cv.html"><sup>03</sup>CV</a></li>
+            <li><a href="../blog.html"><sup>04</sup>Blog</a></li>
+        </ul>
+    </nav>
+
+    <header class="page-head">
+        <span class="label">Office hours &nbsp;/&nbsp; open to the public</span>
+        <h1><span class="split">Book a <em>time</em></span><span class="flower" aria-hidden="true">✿</span></h1>
+        <p class="reasons">for <span class="slot" id="slot">a coffee</span></p>
+        <div class="status">
+            <span class="live"><span class="dot" id="dot"></span><span>My clock: <span id="clock">--:--</span> ET</span></span>
+            <span class="mood" id="mood"></span>
+        </div>
+    </header>
+
+    <main class="booking">
+        <div class="frame" data-reveal>
+            <span class="sticker s1" aria-hidden="true">❀</span>
+            <span class="sticker s2" aria-hidden="true">◉</span>
+            <div class="calendly-inline-widget"
+                 data-url="https://calendly.com/stasahani/new-meeting?hide_gdpr_banner=1&amp;background_color=ffffff&amp;text_color=1a2e1a&amp;primary_color=3f6b3c"></div>
+        </div>
+        <div class="fine">
+            <span>Times show in your timezone. Nothing fits? Just text me.</span>
+            <a class="pill" href="https://calendly.com/stasahani" target="_blank" rel="noopener">Open in Calendly ↗</a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-row" style="margin-top:0">
+            <span>&copy; 2026 Anastasia Ahani</span>
+            <nav aria-label="Footer"><a href="../index.html">Home</a><a href="../art.html">Art</a><a href="../cv.html">CV</a><a href="../blog.html">Blog</a></nav>
+        </div>
+    </footer>
+
+    <div class="booked-toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+    <script src="../assets/site.js" defer></script>
+    <script>
+    (() => {
+        const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        // ---- Rotating reasons ----
+        const reasons = [
+            "a coffee", "a research chat", "a walk by the river", "an overdue catch-up",
+            "a hot take about interpretability", "a painting date", "advice (given or received)",
+            "no particular reason"
+        ];
+        const slot = document.getElementById("slot");
+        let i = 0;
+        if (!reduceMotion) {
+            setInterval(() => {
+                slot.classList.add("out");
+                setTimeout(() => {
+                    i = (i + 1) % reasons.length;
+                    slot.textContent = reasons[i];
+                    slot.classList.remove("out");
+                }, 350);
+            }, 2400);
+        }
+
+        // ---- Live clock + mood, in my timezone ----
+        const tz = "America/New_York";
+        const clock = document.getElementById("clock");
+        const mood = document.getElementById("mood");
+        const dot = document.getElementById("dot");
+        const fmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit" });
+        const hourFmt = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", hourCycle: "h23" });
+        const moods = [
+            [0, 7, "probably asleep", true],
+            [7, 9, "caffeinating", false],
+            [9, 12, "deep in the research mines", false],
+            [12, 14, "lunch-adjacent", false],
+            [14, 18, "peak meeting energy", false],
+            [18, 22, "off the clock, but booking still works", false],
+            [22, 24, "winding down, probably painting", true],
+        ];
+        const tick = () => {
+            const now = new Date();
+            clock.textContent = fmt.format(now);
+            const h = Number(hourFmt.format(now)) % 24;
+            const m = moods.find(([a, b]) => h >= a && h < b);
+            mood.textContent = m[2];
+            dot.classList.toggle("zzz", m[3]);
+        };
+        tick();
+        setInterval(tick, 20000);
+
+        // ---- Little celebration when someone books ----
+        const toast = document.getElementById("toast");
+        const burst = () => {
+            if (reduceMotion) return;
+            const glyphs = [["✿", "var(--strawberry)"], ["❀", "var(--blush)"], ["◉", "var(--lapis)"], ["✿", "var(--sage)"]];
+            const cx = innerWidth / 2, cy = innerHeight - 60;
+            for (let n = 0; n < 28; n++) {
+                const [g, c] = glyphs[n % glyphs.length];
+                const p = document.createElement("span");
+                p.className = "petal";
+                p.textContent = g;
+                p.style.color = c;
+                p.style.left = cx + "px";
+                p.style.top = cy + "px";
+                const a = Math.PI * (1.1 + Math.random() * 0.8);
+                const d = 180 + Math.random() * 320;
+                p.style.setProperty("--dx", Math.cos(a) * d + "px");
+                p.style.setProperty("--dy", Math.sin(a) * d + "px");
+                p.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
+                p.style.setProperty("--t", (2 + Math.random() * 1.4) + "s");
+                p.style.fontSize = (18 + Math.random() * 18) + "px";
+                document.body.append(p);
+                p.addEventListener("animationend", () => p.remove());
+            }
+        };
+        addEventListener("message", e => {
+            if (e.origin !== "https://calendly.com") return;
+            if (e.data && e.data.event === "calendly.event_scheduled") {
+                toast.innerHTML = "It's in the book. See you soon <em>✿</em>";
+                toast.classList.add("show");
+                burst();
+                setTimeout(() => toast.classList.remove("show"), 6000);
+            }
+        });
+    })();
+    </script>
+</body>
+</html>
