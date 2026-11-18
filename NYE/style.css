@@ -332,6 +332,14 @@ h3 { font-size: clamp(1.7rem, 4vw, 2.4rem); }
 .travel-list li::before { content: '✦'; position: absolute; left: 0; top: .4rem; color: var(--gold); font-size: .7rem; }
 .btn-row { display: flex; flex-wrap: wrap; gap: .6rem; }
 
+.card--taxi { grid-column: 1 / -1; }
+.taxi-list { list-style: none; padding: 0; margin: .8rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); column-gap: 2rem; }
+.taxi-list li { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .5rem 0; border-bottom: 1px solid var(--gold-line); font-size: 1rem; }
+.taxi__name { color: var(--cream-2); }
+.taxi__link { flex: 0 0 auto; font-family: var(--fell); letter-spacing: .03em; text-decoration: none; text-align: right; overflow-wrap: anywhere; }
+.taxi__link:hover { text-decoration: underline; }
+@media (max-width: 640px) { .taxi-list li { flex-direction: column; gap: .1rem; } .taxi__link { text-align: left; } }
+
 .pack-list { list-style: none; padding: 0; margin: .8rem 0; }
 .pack-list label { display: flex; gap: .7rem; align-items: flex-start; padding: .38rem 0; cursor: pointer; font-size: 1rem; color: var(--cream-2); transition: color .3s; }
 .pack-list input { appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 18px; height: 18px; margin-top: .25rem; border: 1px solid var(--gold); border-radius: 50%; display: grid; place-items: center; cursor: pointer; transition: background .3s; }
